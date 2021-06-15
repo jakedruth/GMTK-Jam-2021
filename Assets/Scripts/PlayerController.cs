@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,8 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     private Player _player;
+    private bool _recordMovement;
+    private string _data;
 
     void Start()
     {
@@ -14,15 +17,37 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W))
-            _player.Move(0);
-        else if (Input.GetKeyDown(KeyCode.D))
-            _player.Move(1);
-        else if (Input.GetKeyDown(KeyCode.S))
-            _player.Move(2);
-        else if (Input.GetKeyDown(KeyCode.A))
-            _player.Move(3);
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            if (!_recordMovement)
+            {
+                _recordMovement = true;
+                _data = string.Empty;
+            }
+            else
+            {
+                _recordMovement = false;
+                Debug.Log(_data);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow))
+            SendMovement(0);
+        else if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
+            SendMovement(1);
+        else if (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))
+            SendMovement(2);
+        else if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
+            SendMovement(3);
         else if (Input.GetKeyDown(KeyCode.Space))
-            _player.Move(4);
+            SendMovement(4);
+    }
+
+    void SendMovement(int dir)
+    {
+        if (_recordMovement)
+            _data += dir.ToString();
+
+        _player.Move(dir);
     }
 }

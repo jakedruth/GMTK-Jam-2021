@@ -17209,7 +17209,7 @@ TextureImporter:
         height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 6, y: 7, z: 6, w: 6}
       outline:
       - - {x: -8, y: 8}
         - {x: -8, y: -8}
@@ -17238,7 +17238,7 @@ TextureImporter:
         height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 6, y: 6, z: 6, w: 7}
       outline:
       - - {x: -8, y: 8}
         - {x: -8, y: -8}
@@ -24860,12 +24860,12 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 425
-        y: 102
+        y: 103
         width: 16
         height: 16
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
+      border: {x: 4, y: 4, z: 4, w: 4}
       outline:
       - - {x: -8, y: 8}
         - {x: -8, y: -8}
