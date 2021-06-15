@@ -70,7 +70,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_Sprite: {fileID: -521816326939231705, guid: 05dfaf504d15b124c8554f2d7f06536f, type: 3}
   m_Color: {r: 0.8666667, g: 0.06666667, b: 0.33333334, a: 1}
   m_FlipX: 0
@@ -94,6 +94,7 @@ GameObject:
   - component: {fileID: 1241996064934386925}
   - component: {fileID: 1241996064934386922}
   - component: {fileID: 1241996064934386927}
+  - component: {fileID: 1315910111}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -179,3 +180,24 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!50 &1315910111
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1241996064934386923}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

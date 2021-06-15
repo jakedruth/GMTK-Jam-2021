@@ -1,14 +1,18 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Dynamic;
 using Unity.Profiling;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Tilemaps;
 
 [SelectionBase]
 public class Player : MonoBehaviour
 {
-    public readonly float halfSize = 0.5f;
+    public const float HalfSize = 0.5f;
+    private Vector3 _startPos;
+
     public float moveSpeed;
     public float tiltDelta;
     public float tiltSpeed;
@@ -19,12 +23,12 @@ public class Player : MonoBehaviour
     public UnityEvent onStartMoving;
     public UnityEvent onEndMoving;
 
-    public bool isMoving { get; set; } = false;
-    public bool canMove { get; set; } = true;
+    public bool isMoving { get; set; }
+    public bool canMove { get; set; }
 
     void Awake()
     {
-
+        _startPos = transform.position;
     }
 
     void Update()
@@ -45,38 +49,88 @@ public class Player : MonoBehaviour
         if (!canMove)
             return;
 
+        if (dir == 4)
+        {
+            onEndMoving.Invoke();
+            return;
+        }
+
         Vector3 direction = GetVectorFromInt(dir);
-
         Ray2D ray = new Ray2D(transform.position, direction);
-        Debug.DrawRay(ray.origin, ray.direction * 20, Color.red, 0.1f, false);
 
+        List<Vector3> points = GetPoints(ray, new List<Vector3>());
+
+        StartCoroutine(MoveToPoint(points));
+    }
+
+    private List<Vector3> GetPoints(Ray2D ray, List<Vector3> points)
+    {
         RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, 20, collisionLayer);
         if (hit)
         {
-            if (hit.transform.tag == "Wall" ||
-                hit.transform.tag == "Player")
+            switch (hit.transform.tag)
             {
-                Vector3Int point = Vector3Int.RoundToInt(hit.point + hit.normal * halfSize);
-                StartCoroutine(MoveToPoint(point));
+                case "Player":
+                {
+                    if (hit.transform == transform)
+                    {
+                        return GetPoints(new Ray2D(hit.transform.position, ray.direction), points );
+                    }
+
+                    Vector3Int point = Vector3Int.RoundToInt(hit.point + hit.normal * HalfSize);
+                    points.Add(point);
+                    return points;
+                }
+                case "Wall":
+                {
+                    Vector3Int point = Vector3Int.RoundToInt(hit.point + hit.normal * HalfSize);
+                    points.Add(point);
+                    return points;
+                }
+                case "Web":
+                {
+                    Vector3Int point = Vector3Int.RoundToInt(hit.transform.position);
+                    points.Add(point);
+                    return points;
+                }
+                case "Arrow":
+                {
+                    Vector3Int point = Vector3Int.RoundToInt(hit.transform.position);
+                    points.Add(point);
+                    Vector3 direction = hit.transform.right;
+                    return GetPoints(new Ray2D((Vector3)point, direction), points );
+                }
+                default:
+                {
+                    Debug.Log($"hit.transform.tag, [{hit.transform.tag}], is not registered in the switch");
+                    break;
+                }
             }
         }
         else
         {
             Debug.LogWarning($"Did not hit with raycast: {ray}");
         }
+
+        return points;
     }
 
-    private IEnumerator MoveToPoint(Vector3 point)
+    private IEnumerator MoveToPoint(List<Vector3> points)
     {
         isMoving = true;
         onStartMoving.Invoke();
         
-        while (true)
-        {
-            if (transform.position == point)
-                break;
+        int i = 0;
 
-            transform.position = Vector3.MoveTowards(transform.position, point, moveSpeed * Time.deltaTime);
+        while (i < points.Count)
+        {
+            if (transform.position == points[i])
+            {
+                i++;
+                continue;
+            }
+            
+            transform.position = Vector3.MoveTowards(transform.position, points[i], moveSpeed * Time.deltaTime);
 
             yield return null;
         }
@@ -113,6 +167,11 @@ public class Player : MonoBehaviour
         {
             collision.GetComponent<GoalMarker>().SetIsOverlapping(true);
         }
+        else if (collision.transform.CompareTag("Spike"))
+        {
+            Debug.Log("Hit Spike");
+            FindObjectOfType<LevelHandler>().FailLevel(collision.ClosestPoint(transform.position));
+        }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -121,5 +180,21 @@ public class Player : MonoBehaviour
         {
             collision.GetComponent<GoalMarker>().SetIsOverlapping(false);
         }
+    }
+
+    public void Reset()
+    {
+        StopAllCoroutines();
+
+        transform.position = _startPos;
+        _tiltMultiplier = 0;
+
+        isMoving = false;
+        canMove = false;
+    }
+
+    public void AllowInput(bool value)
+    {
+        canMove = value;
     }
 }

@@ -22,5 +22,7 @@ public class PlayerController : MonoBehaviour
             _player.Move(2);
         else if (Input.GetKeyDown(KeyCode.A))
             _player.Move(3);
+        else if (Input.GetKeyDown(KeyCode.Space))
+            _player.Move(4);
     }
 }
