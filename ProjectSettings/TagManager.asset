@@ -9,6 +9,8 @@ TagManager:
   - Arrow
   - Spike
   - Web
+  - Box
+  - Switch
   layers:
   - Default
   - TransparentFX

@@ -169,8 +169,11 @@ public class Player : MonoBehaviour
         }
         else if (collision.transform.CompareTag("Spike"))
         {
-            Debug.Log("Hit Spike");
             FindObjectOfType<LevelHandler>().FailLevel(collision.ClosestPoint(transform.position));
+        }
+        else if (collision.transform.CompareTag("Switch"))
+        {
+            collision.transform.GetComponent<Switch>().ToggleIsOn();
         }
     }
 
@@ -179,6 +182,24 @@ public class Player : MonoBehaviour
         if (collision.CompareTag("Goal"))
         {
             collision.GetComponent<GoalMarker>().SetIsOverlapping(false);
+        }
+    }
+
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.transform.CompareTag("Box"))
+        {
+            Box box = collision.transform.GetComponent<Box>();
+            if (box.isSolid)
+            {
+                Vector3Int pos = Vector3Int.RoundToInt(transform.position);
+                StopAllCoroutines();
+
+                transform.position = pos;
+
+                isMoving = false;
+                onEndMoving.Invoke();
+            }
         }
     }
 
