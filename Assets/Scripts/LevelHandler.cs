@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class LevelHandler : MonoBehaviour
@@ -269,7 +270,19 @@ public class LevelHandler : MonoBehaviour
             }
         }
 
-        Debug.Log("Victory!");
+        player.StopAllCoroutines();
+        otherPlayer.StopAllCoroutines();
+        player.canMove = player.isMoving = false;
+        otherPlayer.canMove = otherPlayer.isMoving = false;
+
+        const float time = 0.3f;
+        _cam.FillScreenTo(0, time, Easing.Quadratic.InOut);
+        
+        DelayFunctionCall(time, () =>
+        {
+            int i = SceneManager.GetActiveScene().buildIndex;
+            SceneManager.LoadScene(i + 1);
+        });
     }
 }
 
