@@ -190,7 +190,7 @@ public class Player : MonoBehaviour
         if (collision.transform.CompareTag("Box"))
         {
             Box box = collision.transform.GetComponent<Box>();
-            if (box.isSolid)
+            if (box.isSolid && isMoving)
             {
                 Vector3Int pos = Vector3Int.RoundToInt(transform.position);
                 StopAllCoroutines();

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[SelectionBase]
 public class Box : MonoBehaviour
 {
     private SpriteRenderer _spriteRenderer;
@@ -45,9 +46,18 @@ public class Box : MonoBehaviour
         isSolid = !isSolid;
     }
 
+
     private void HandleSprite()
     {
+        if (_spriteRenderer == null)
+            _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         _spriteRenderer.sprite = isSolid ? solidSprite : notSolidSprite;
         _spriteRenderer.color = isSolid ? solidColor : notSolidColor;
+    }
+
+    void OnValidate()
+    {
+        isSolid = startingState;
+        HandleSprite();
     }
 }

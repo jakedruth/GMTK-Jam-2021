@@ -16,6 +16,15 @@ public class MainMenuHandler : MonoBehaviour
         });
     }
 
+    public void ReplayGame()
+    {
+        FindObjectOfType<CameraController>().FillScreenTo(0, 1f, Easing.Cubic.In);
+        DelayFunctionCall(1.1f, () =>
+        {
+            SceneManager.LoadScene(0);
+        });
+    }
+
     private void DelayFunctionCall(float delay, Action func)
     {
         StartCoroutine(delayEnumerator(delay, func));

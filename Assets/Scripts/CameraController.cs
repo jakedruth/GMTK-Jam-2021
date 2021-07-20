@@ -6,7 +6,8 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     private Camera _camera;
-    private PostProcess _process;
+    public PostProcess postProcess { get; private set; }
+    private Vector2Int _resolution;
 
     private Vector3 _startPos;
     private float _startZoom;
@@ -14,11 +15,29 @@ public class CameraController : MonoBehaviour
     void Awake()
     {
         _camera = GetComponent<Camera>();
-        _process = GetComponent<PostProcess>();
-        _process.material.SetFloat("_FillAmount", 1.1f);
+        postProcess = GetComponent<PostProcess>();
+        postProcess.material.SetFloat("_FillAmount", 1.1f);
 
         _startPos = transform.position;
         _startZoom = _camera.orthographicSize;
+
+        Debug.Log($"Width: {Screen.width}\t Height: {Screen.height}");
+    }
+
+
+    void Update()
+    {
+        _resolution.x = Screen.width;
+        _resolution.y = Screen.height;
+
+        if (_resolution.x != (int)postProcess.material.GetFloat("_ScreenWidth") || 
+            _resolution.y != (int)postProcess.material.GetFloat("_ScreenHeight"))
+        {
+            postProcess.material.SetFloat("_ScreenWidth", _resolution.x);
+            postProcess.material.SetFloat("_ScreenHeight", _resolution.y);
+
+            
+        }
     }
 
     public void MoveTo(Vector3 point, float time, EasingFunction easing)
@@ -81,12 +100,12 @@ public class CameraController : MonoBehaviour
 
     public void SetFillScreen(float value)
     {
-        _process.material.SetFloat("_FillAmount", value);
+        postProcess.material.SetFloat("_FillAmount", value);
     }
 
     private IEnumerator FillScreenToValue(float value, float time, EasingFunction easing)
     {
-        float startValue = _process.material.GetFloat("_FillAmount");
+        float startValue = postProcess.material.GetFloat("_FillAmount");
         float timer = 0;
         while (timer <= time)
         {
@@ -94,7 +113,7 @@ public class CameraController : MonoBehaviour
 
             float t = easing.Invoke(timer / time);
 
-            _process.material.SetFloat("_FillAmount",  Mathf.Lerp(startValue, value, t));
+            postProcess.material.SetFloat("_FillAmount",  Mathf.Lerp(startValue, value, t));
 
             yield return null;
         }
